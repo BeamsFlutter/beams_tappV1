@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "392213925602",
+    "project_id": "beamstapp",
+    "storage_bucket": "beamstapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392213925602:android:b3c340a80f21c5cf66d8bb",
+        "android_client_info": {
+          "package_name": "com.beams.beams_tap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392213925602-caj9d21a5kgl5bpkfr030budmrnliebd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDza0D-KPX2CTog4LC8vIme6A58-Rt8HRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392213925602-caj9d21a5kgl5bpkfr030budmrnliebd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
