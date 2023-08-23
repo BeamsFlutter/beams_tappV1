@@ -17,8 +17,9 @@ class CountrySelectorTextInput extends StatefulWidget {
   final TextEditingController textFieldcontroller;
   final TextFormFieldType textFormFieldType;
   final bool?enable;
+  final String?mode;
 
-  CountrySelectorTextInput({required this.textFieldcontroller,required this.textFormFieldType,this.enable});
+  CountrySelectorTextInput({required this.textFieldcontroller,required this.textFormFieldType,this.enable, this.mode});
 
   @override
   State<CountrySelectorTextInput> createState() => _CountrySelectorTextInputState();
@@ -57,34 +58,37 @@ class _CountrySelectorTextInputState extends State<CountrySelectorTextInput> {
       showOnlyCountryWhenClosed: false,
       showFlag: true,
       flagWidth: 20.3,
-      padding: EdgeInsets.all(5) ,
+      padding: const EdgeInsets.all(5) ,
       countryList: countryCodeList,
       onChanged: onCountryChange,
       initialSelection: commonController.selectcountry.value,
       favorite: ['+971','AE'],
       // showCountryOnly: false,
       // showFlagDialog: true,
-      searchStyle:  const TextStyle(
+      searchStyle:   const TextStyle(
           color: Colors.black,
           // fontFamily: AppFont.defaultAppFont,
           fontSize: 14,
           fontWeight: FontWeight.w300
       ),
       showFlagMain: true,
-      searchDecoration:  const InputDecoration(
+      searchDecoration:   InputDecoration(
         prefixIconColor: Colors.black,
         suffixIconColor:  Colors.black,
         fillColor:  Colors.black,
         hoverColor:  Colors.black,
         iconColor:  Colors.black,focusColor:  Colors.black,
-        border: OutlineInputBorder(
+        border:  const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
             borderSide: BorderSide(color: AppColors.primarycolor)),
-        enabledBorder: OutlineInputBorder(
+
+
+
+        enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(color: AppColors.primarycolor,),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder:widget.mode=="ticket"?null: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(color: AppColors.primarycolor),
         ),
@@ -108,37 +112,36 @@ class _CountrySelectorTextInputState extends State<CountrySelectorTextInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: 30,
-      borderRadius: BorderRadius.circular(20) ,
-        shadowColor: AppColors.lightfontcolor.withOpacity(0.3),
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        autofocus: false,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: widget.textFieldcontroller,
-        inputFormatters: InputFormattor.mfnInputFormatters(),
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      autofocus: false,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: widget.textFieldcontroller,
+      inputFormatters: InputFormattor.mfnInputFormatters(),
 
-        decoration: InputDecoration(
-            hintText: '526912222',
-            fillColor: Colors.white,
-            hintStyle: const TextStyle(color:  AppColors.lightfontcolor, fontSize: 13),
-            filled: true,
-            prefixIcon: getPrefixIcon(),
-            border: InputBorder.none,
-            errorStyle: const TextStyle(
-               fontSize: 9,
-              fontWeight: FontWeight.w500,
-              color: Colors.red),
-            contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      decoration: InputDecoration(
+          hintText: '526912222',
+          fillColor: Colors.white,
+          hintStyle: const TextStyle(color:  AppColors.lightfontcolor, fontSize: 13),
+          filled: true,
+          prefixIcon: getPrefixIcon(),
+          border:  widget.mode=="ticket"? OutlineInputBorder(
+            borderRadius:
+            BorderRadius.circular(30.0),
+            borderSide: BorderSide.none,
+          ):InputBorder.none,
+          errorStyle: const TextStyle(
+             fontSize: 9,
+            fontWeight: FontWeight.w500,
+            color: Colors.red),
+          contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
 
-            // suffixIcon:iconOnsuffix(textFormFieldType)
-        ),
-        validator: (String? value) {
-          return FormValidator.isMobileNumValid(value??"",commonController.selectcountry.value);
+          // suffixIcon:iconOnsuffix(textFormFieldType)
+      ),
+      validator: (String? value) {
+        return FormValidator.isMobileNumValid(value??"",commonController.selectcountry.value);
 
-        },
-          ),
-    );
+      },
+        );
   }
 }

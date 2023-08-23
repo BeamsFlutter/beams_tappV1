@@ -237,9 +237,10 @@ fnGetHistory(dropdownvalue.value);
         //   },
         // );
       }
-    }else{
-      commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText():fnPrint();
     }
+
+      commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText():fnPrint();
+
   }
 
 
@@ -417,10 +418,6 @@ fnGetHistory(dropdownvalue.value);
     dprint("devName>>> ${devName.toString()}");
     await SunmiPrinter.initPrinter();
     await SunmiPrinter.startTransactionPrint(true);
-     await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-
-
-
 
     // List list = [];
 
@@ -430,13 +427,12 @@ fnGetHistory(dropdownvalue.value);
 
       dprint("type:>>ret>> ${type}");
       if (type == "L") {
-        SunmiPrinter.lineWrap(1);
+        await SunmiPrinter.lineWrap(1);
       //  list.add(SunmiPrinter.lineWrap(2));
         //  list.add(LineText(linefeed: e["FEED"] ?? 1));
       }
 
       else if (key == "DATA") {
-        await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
         var srno  = 1;
         for(var d in historyList.value){
           dprint("History>>>>details>>>> ${d}");
@@ -445,33 +441,33 @@ fnGetHistory(dropdownvalue.value);
             docdate =setDate(15, DateTime.parse(d.dOCDATE.toString()));
           }catch(e){}
 
-            SunmiPrinter.printText("$srno. ${d.tITLE}"
+          await SunmiPrinter.printText("$srno. ${d.tITLE}"
 
           );
 
-              SunmiPrinter.printText("   ${d.dOCNO.toString()}"
+          await SunmiPrinter.printText("   ${(d.dOCNO??"").toString()}"
 
           );
 
-              SunmiPrinter.printText("   ${docdate.toString()}"
+          await SunmiPrinter.printText("   ${docdate.toString()}"
 
           );
 
-              SunmiPrinter.printText("   USER : ${d.cREATEUSER.toString().toUpperCase()}"
+          await SunmiPrinter.printText("   USER : ${(d.cREATEUSER??"").toString().toUpperCase()}"
 
           );
 
-              SunmiPrinter.printText("   DEVICE : ${d.deviceName.toString().toUpperCase()}"
+          await SunmiPrinter.printText("   DEVICE : ${(d.deviceName??"").toString().toUpperCase()}"
 
           );
 
-              SunmiPrinter.printText("  "
+          await SunmiPrinter.printText("  "
 
           );
-          SunmiPrinter.printText("   ${d.cARDNO.toString().toUpperCase()}");
-          SunmiPrinter.printText("   PARTY : ${d.sLDESC.toString().toUpperCase()}");
-         SunmiPrinter.printText("   ${d.mOBILE.toString().toUpperCase()}");
-        SunmiPrinter.printText("     ${mfnDbl(d.aMT).toStringAsFixed(2)}");
+          await SunmiPrinter.printText("   ${(d.cARDNO??"").toString().toUpperCase()}");
+          await SunmiPrinter.printText("   PARTY : ${(d.sLDESC??"").toString().toUpperCase()}");
+          await SunmiPrinter.printText("   ${d.mOBILE.toString().toUpperCase()}");
+          await SunmiPrinter.printText("     ${mfnDbl(d.aMT).toStringAsFixed(2)}",style: SunmiStyle(align: SunmiPrintAlign.RIGHT));
 
           srno = srno+1;
         }
@@ -486,7 +482,6 @@ fnGetHistory(dropdownvalue.value);
         var zoom = e["ZOOM"] ?? 1;
         var fontsize = e["FONT_SIZE"] ?? 15;
         if (value.toString().isEmpty && key.toString().isNotEmpty) {
-          await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
           if (key == "DATE") {
             value = (title + " " + setDate(9, DateTime.now()));
           } else if (key == "CODE") {
@@ -523,23 +518,16 @@ fnGetHistory(dropdownvalue.value);
         // else if(value.toString().isNotEmpty && key.toString().isEmpty){
         //   value = (value.toString());
         // }
-        await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-            SunmiPrinter.printText(
+        await SunmiPrinter.printText(
             value,
                 style:SunmiStyle(
                   fontSize: value.toString().isNotEmpty &&weight==1 && zoom==2?SunmiFontSize.XL:SunmiFontSize.MD,
                   align: align == "L" ? SunmiPrintAlign.LEFT : align == "C" ? SunmiPrintAlign.CENTER: align == "R" ? SunmiPrintAlign.RIGHT :SunmiPrintAlign.LEFT,
                 )
-
-
-
         );
       }
     }
 
-
-
-    SunmiPrinter.cut();
     await SunmiPrinter.line();
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.exitTransactionPrint(true);

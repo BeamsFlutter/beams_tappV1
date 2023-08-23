@@ -19,6 +19,7 @@
    <application
         android:label="beams_tapp"
         android:name="${applicationName}"
+       android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
        <!-- Provider -->
        <provider

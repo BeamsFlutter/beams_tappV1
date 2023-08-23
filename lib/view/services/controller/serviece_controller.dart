@@ -100,6 +100,7 @@ class ServieceController extends GetxController{
 
 
   fnAmounttoPay(cardnumb,context)async{
+    dprint("!!!!>>>> ${totalamount.value}");
     var devid = await  Prefs.getString(AppStrings.deviceId);
     try{
       var COUNTER_SALHEAD =[];
@@ -139,10 +140,12 @@ class ServieceController extends GetxController{
         CustomToast.showToast(
             commonModel.mSG.toString(), ToastType.success,
             ToastPositionType.end);
-        Get.off( SuccessScreen(sldesc:"",slcode: "",amount: txtAmount.text, transaction_id: commonModel.cODE.toString(), card_id: cardnumb, printCode: printCode,date: setDate(6, DateTime.now())));
-        txtAmount.clear();
-        payBtnPress.value=false;
+        dprint("!!!!!!!!!!!!!!! ${txtAmount.text}");
+        dprint("!!!!!!!!!!!!!!! ${totalamount.value}  typr ${totalamount.value.runtimeType}");
+        Get.off(()=>SuccessScreen(amount: totalamount.value.toString(), transaction_id: commonModel.cODE.toString(), card_id: cardnumb, date: setDate(6, DateTime.now()), printCode: printCode, slcode: "", sldesc: ""));
 
+        payBtnPress.value=false;
+        txtAmount.clear();
 
       } else {
         showDialog(

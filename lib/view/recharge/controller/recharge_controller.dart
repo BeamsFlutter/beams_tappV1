@@ -350,9 +350,9 @@ class RechargeController extends GetxController{
         //   },
         // );
       }
-    }else{
-      commonController.wstrSunmiDevice.value=="Y"? fnsunmiPrintText():fnPrint();
     }
+      commonController.wstrSunmiDevice.value=="Y"? fnsunmiPrintText():fnPrint();
+
   }
   fnPrint() async {
     var devid = await  Prefs.getString(AppStrings.deviceId);
@@ -530,10 +530,6 @@ class RechargeController extends GetxController{
     dprint("devName>>> ${devName.toString()}");
     await SunmiPrinter.initPrinter();
     await SunmiPrinter.startTransactionPrint(true);
-    // await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-
-
-
 
    // List list = [];
 
@@ -542,41 +538,40 @@ class RechargeController extends GetxController{
       var type = e["TYPE"] ?? "";
       var key = e["KEY"] ?? "";
       if (type == "L") {
-        // list.add(SunmiPrinter.lineWrap(2));
-        SunmiPrinter.lineWrap(1);
-        //  list.add(LineText(linefeed: e["FEED"] ?? 1));
+        await SunmiPrinter.lineWrap(1);
       }
       else if (key == "DATA") {
+
         var srno  = 1;
         for(var d in historyList) {
           var docdate = "";
           try {
             docdate = setDate(15, DateTime.parse(d.dOCDATE.toString()));
           } catch (e) {}
-         SunmiPrinter.printText(
+         await SunmiPrinter.printText(
             "$srno. ${d.tITLE}",
 
           );
-          SunmiPrinter.printText("   ${d.dOCNO.toString()}");
-          SunmiPrinter.printText("   ${docdate.toString()}");
+          await SunmiPrinter.printText("   ${d.dOCNO.toString()}");
+          await SunmiPrinter.printText("   ${docdate.toString()}");
 
-              SunmiPrinter.printText("   ${d.dNAME.toString().toUpperCase()}");
-        SunmiPrinter.printText(
+          await SunmiPrinter.printText("   ${d.dNAME.toString().toUpperCase()}");
+          await SunmiPrinter.printText(
               "   ${d.cREATEUSER.toString().toUpperCase()}");
-          SunmiPrinter.printText(" ");
-        SunmiPrinter.printText(
+          await SunmiPrinter.printText(" ");
+          await SunmiPrinter.printText(
               "   ${d.cARDNO.toString().toUpperCase()}");
-          SunmiPrinter.printText(
+          await SunmiPrinter.printText(
               "   PARTY : ${customer_name.value.toString().toUpperCase()}");
 
-              SunmiPrinter.printText("     ${mfnDbl(d.aMT).toStringAsFixed(2)}",
+          await SunmiPrinter.printText("     ${mfnDbl(d.aMT).toStringAsFixed(2)}",
                   style: SunmiStyle(align: SunmiPrintAlign.RIGHT)
           );
           srno = srno + 1;
         }
       }
-
       else {
+
         var title = e["TITLE"] ?? "";
         var key = e["KEY"] ?? "";
         var zoom = e["ZOOM"] ?? 1;
@@ -629,8 +624,7 @@ class RechargeController extends GetxController{
         dprint("ALIGN>>>> ${align}");
         dprint("VALUE>>>> ${value}");
 
-
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
               value,
               style:SunmiStyle(
                 fontSize: value.toString().isNotEmpty &&weight==1 && zoom==2?SunmiFontSize.XL:SunmiFontSize.MD,

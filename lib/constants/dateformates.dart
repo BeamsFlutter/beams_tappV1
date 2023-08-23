@@ -19,7 +19,8 @@ setDate(mode,DateTime date){
   var formatDate14 = DateFormat('MMMM');
   var formatDate15 = DateFormat('dd MMM yyyy hh:mm a');
   var formatDate16 = DateFormat('MMMM dd,yyyy hh:mm a');
-
+  var formatDate17 = DateFormat('dd MMM yyyy');
+  var formatDate18 = DateFormat('hh:mm');
   try{
     switch(mode){
       case 1:{
@@ -84,6 +85,14 @@ setDate(mode,DateTime date){
       break;
       case 16:{
         dateRtn =  formatDate16.format(date);
+      }
+      break;
+      case 17:{
+        dateRtn =  formatDate17.format(date);
+      }
+      break;
+      case 18:{
+        dateRtn =  formatDate18.format(date);
       }
       break;
       default: {

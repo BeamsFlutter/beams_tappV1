@@ -47,6 +47,11 @@ class AppStrings {
   static const String printer_name = "PrinterName";
   static const String printer_path = "PrinterPath";
 
+  static const String select_bt_device = "SelectedBluetoothDevice";
+
+  //region for READER DEVICE SESSIO......................
+  static const String rdr_siteCode = "SelectedBluetoothDevice";
+
 
 }
 class AppAssets {

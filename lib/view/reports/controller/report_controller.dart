@@ -405,9 +405,9 @@ class ReportController extends GetxController {
           );
         }
       }
-    }else{
-      commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText(mode):fnPrint(mode);
     }
+    //  commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText(mode):fnPrint(mode);
+
   }
 
 
@@ -849,24 +849,20 @@ class ReportController extends GetxController {
     dprint("devName>>> ${devName.toString()}");
     await SunmiPrinter.initPrinter();
     await SunmiPrinter.startTransactionPrint(true);
-    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-
-
-    // List list = [];
 
     for (var e in printData.value) {
       dprint("feed:>>>> ${e}");
       var type = e["TYPE"] ?? "";
       var key = e["KEY"] ?? "";
       if (type == "L") {
-        SunmiPrinter.lineWrap(1);
+        await SunmiPrinter.lineWrap(1);
         //  list.add(LineText(linefeed: e["FEED"] ?? 1));
       }
       else if (key == "DATA") {
         var srno = 1;
         var totalAmt = 0.0;
         for (var d in collection) {
-          SunmiPrinter.printText(
+          await SunmiPrinter.printText(
               "$srno. ${d.pAYMODE.toString()}  :   ${(d.aMT?.toStringAsFixed(2))
                   .toString()}"
 
@@ -875,7 +871,7 @@ class ReportController extends GetxController {
           srno = srno + 1;
         }
 
-            SunmiPrinter.printText("TOTAL :   ${totalAmt.toStringAsFixed(2)}");
+        await  SunmiPrinter.printText("TOTAL :   ${totalAmt.toStringAsFixed(2)}");
       }
       else if (key == "DET_DATA") {
         var srno = 1;
@@ -885,22 +881,22 @@ class ReportController extends GetxController {
             try {
               docdate = setDate(15, DateTime.parse(det.dOCDATE.toString()));
             } catch (e) {}
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
               "$srno. ${det.dOCNO.toString()}",);
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
               "   ${docdate.toString()}");
-          SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.dNAME.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.cREATEUSER.toString().toUpperCase()}");
-            SunmiPrinter.printText("  ");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText("  ");
+            await SunmiPrinter.printText(
                 "   ${det.cARDNO.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   PARTY : ${det.sLDESCP.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.mOBILE.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "     ${mfnDbl(det.aMT).toStringAsFixed(2)}",
                 style: SunmiStyle(align: SunmiPrintAlign.RIGHT));
             srno = srno + 1;
@@ -912,20 +908,20 @@ class ReportController extends GetxController {
             try {
               docdate = setDate(15, DateTime.parse(det.dOCDATE.toString()));
             } catch (e) {}
-           SunmiPrinter.printText("$srno. ${det.dOCNO.toString()}");
-           SunmiPrinter.printText("   ${docdate.toString()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText("$srno. ${det.dOCNO.toString()}");
+            await SunmiPrinter.printText("   ${docdate.toString()}");
+            await SunmiPrinter.printText(
                 "   ${det.dNAME.toString().toUpperCase()}");
-          SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.cREATEUSER.toString().toUpperCase()}");
-           SunmiPrinter.printText("  ");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText("  ");
+            await SunmiPrinter.printText(
                 "   ${det.cARDNO.toString().toUpperCase()}");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   PARTY : ${det.sLDESCP.toString().toUpperCase()}");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.mOBILE.toString().toUpperCase()}");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "     ${mfnDbl(det.aMT).toStringAsFixed(2)}",
                 style: SunmiStyle(align: SunmiPrintAlign.RIGHT)
             );
@@ -938,20 +934,20 @@ class ReportController extends GetxController {
             try {
               docdate = setDate(15, DateTime.parse(det.dOCDATE.toString()));
             } catch (e) {}
-            SunmiPrinter.printText("$srno. ${det.dOCNO.toString()}");
-            SunmiPrinter.printText("   ${docdate.toString()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText("$srno. ${det.dOCNO.toString()}");
+            await  SunmiPrinter.printText("   ${docdate.toString()}");
+            await SunmiPrinter.printText(
                 "   ${det.dNAME.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.cREATEUSER.toString().toUpperCase()}");
-            SunmiPrinter.printText("  ");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText("  ");
+            await SunmiPrinter.printText(
                 "   ${det.cARDNO.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   PARTY : ${det.sLDESCP.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.mOBILE.toString().toUpperCase()}");
-           SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "     ${mfnDbl(det.nETAMT).toStringAsFixed(2)}",
                 style: SunmiStyle(
                     align: SunmiPrintAlign.RIGHT
@@ -965,19 +961,19 @@ class ReportController extends GetxController {
             try {
               docdate = setDate(15, DateTime.parse(det.iSSUEDATE.toString()));
             } catch (e) {}
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "$srno. ${det.sLDESCP.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.cARDNO.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.mOBILE.toString().toUpperCase()}");
-            SunmiPrinter.printText("  ");
-            SunmiPrinter.printText("   ${docdate.toString()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText("  ");
+            await SunmiPrinter.printText("   ${docdate.toString()}");
+            await SunmiPrinter.printText(
                 "   ${det.dNAME.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "   ${det.cREATEUSER.toString().toUpperCase()}");
-            SunmiPrinter.printText(
+            await SunmiPrinter.printText(
                 "     ${mfnDbl(det.rEGCHARGE).toStringAsFixed(2)}",
                 style: SunmiStyle(align: SunmiPrintAlign.RIGHT));
             srno = srno + 1;
@@ -996,12 +992,11 @@ class ReportController extends GetxController {
         var weight = e["WEIGHT"] ?? 0;
         var fontsize = e["FONT_SIZE"] ?? 15;
         if (value.toString().isEmpty && key.toString().isNotEmpty) {
-          await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
           if (key == "DATE") {
-            value = (title + " " + setDate(9, DateTime.now()));
+            value = (title + ": " + setDate(9, DateTime.now()));
           }
           else if (key == "TIME") {
-            value = (title + " " + setDate(11, DateTime.now()));
+            value = (title + ": " + setDate(11, DateTime.now()));
           }
           else if (key == "HEAD") {
             var thead = mode == "REC" ? "Recharge Report" : mode == "REF"
@@ -1009,48 +1004,51 @@ class ReportController extends GetxController {
                 : mode == "SAL" ? "Sales Report" : mode == "REG"
                 ? "Registration"
                 : "";
-            value = (title + "" + thead);
+            value = (title + ":" + thead);
           }
           else if (key == "DEVICEID") {
-            value = (title + " " + devid.toString());
+            value = (title + ": " + devid.toString());
           }
           else if (key == "FILTER") {
             value = (title + "From " + from.value + " To " + to.value);
           }
           else if (key == "DEVICENAME") {
-            value = (title + " " + devName.toString());
+            value = (title + ": " + devName.toString());
           }
           else if (key == "REC_AMOUNT") {
-            value = (title + " " + recahrge.value.rECHARGEAMT.toString());
+            value = (title + ": " + recahrge.value.rECHARGEAMT.toString());
           }
           else if (key == "REC_COUNT") {
             value =
-            (title + " " + mfnInt(recahrge.value.nOOFRECHARGE).toString());
+            (title + ": " + mfnInt(recahrge.value.nOOFRECHARGE).toString());
           }
           else if (key == "REF_AMOUNT") {
-            value = (title + " " + refund.value.reFundAMT.toString());
+            value = (title + ": " + refund.value.reFundAMT.toString());
           }
           else if (key == "REF_COUNT") {
             value =
-            (title + " " + mfnInt(refund.value.nOOFREFUND).toString());
+            (title + ": " + mfnInt(refund.value.nOOFREFUND).toString());
           }
           else if (key == "REG_AMOUNT") {
-            value = (title + " " + registeration.value.rEGAMOUNT.toString());
+            value = (title + ": " + registeration.value.rEGAMOUNT.toString());
           }
           else if (key == "REG_COUNT") {
             value =
-            (title + " " + mfnInt(registeration.value.nOOFCARDS).toString());
+            (title + ": " + mfnInt(registeration.value.nOOFCARDS).toString());
           }
           else if (key == "SAL_AMOUNT") {
-            value = (title + " " + sales.value.nETAMT.toString());
+            value = (title + ": " + sales.value.nETAMT.toString());
           }
           else if (key == "SAL_COUNT") {
-            value = (title + " " + mfnInt(sales.value.nOOFBILL).toString());
+            value = (title + ": " + mfnInt(sales.value.nOOFBILL).toString());
           }
         }
+        else if(value.toString().isNotEmpty && key.toString().isEmpty){
+          // await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+          value = (value.toString());
+        }
 
-
-        SunmiPrinter.printText(
+        await SunmiPrinter.printText(
           value,
           style: SunmiStyle(
             fontSize: value.toString().isNotEmpty &&weight==1 && zoom==2?SunmiFontSize.XL:SunmiFontSize.MD,
@@ -1058,17 +1056,12 @@ class ReportController extends GetxController {
                 ? SunmiPrintAlign.CENTER
                 : align == "R" ? SunmiPrintAlign.RIGHT : SunmiPrintAlign
                 .LEFT,
-            // bold: value.toString().isNotEmpty && weight==1?true:false
+            bold: value.toString().isNotEmpty && weight==1?true:false
           ),
 
         );
       }
-
-
-
     }
-    SunmiPrinter.cut();
-    await SunmiPrinter.line();
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.exitTransactionPrint(true);
   }

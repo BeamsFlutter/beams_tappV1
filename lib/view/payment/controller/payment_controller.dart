@@ -71,6 +71,7 @@ class PaymentController extends GetxController{
 
           // Get.off(SuccessScreen(amount:"500",card_id: cardnumb.value,transaction_id: "tranid....",date:  setDate(16,DateTime.now()),));
           // fnCardDetails(serialnumb,"N");
+          dprint("AMTTTTT>>> ${amount.toString()}");
           fnAmounttoPay(cudate,context,amount,docnumb,expdate,doctype);
           await NfcManager.instance.stopSession();
           update();

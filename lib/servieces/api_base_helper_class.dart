@@ -113,7 +113,7 @@ class ApiHelperClass {
               // debugPrint("sent${count.toString()}" + " total${total.toString()}");
             });
 
-      dprint("55555555");
+
       dprint(response);
       responseJson = _returnResponse(response);
       debugPrint("Api result after converting-->$responseJson");
@@ -148,7 +148,7 @@ class ApiHelperClass {
       responseJson = _returnResponse(response);
       debugPrint("Api result after converting-->$responseJson");
     } on DioError catch(exception){
-      debugPrint("Exception ${exception.response?.statusCode} ${exception.type}");
+      debugPrint("Exception........... ${exception.response?.statusCode} ${exception.type}");
       handleDioExceptions(exception);
     }catch(exception){
       throw UnHandledException(exception.toString());
@@ -220,8 +220,8 @@ class ApiHelperClass {
   static String getBaseUrl() {
     if (Foundation.kReleaseMode) {
       //todo: change the name of base url
-      //return "http://192.168.1.117:4400";
-      return "http://192.168.0.103:2323";
+     return "http://192.168.1.117:4400";
+     // return "http://192.168.0.103:2323";
 
       // return  "http://splash123.dyndns.org:4402";
     } else if (Foundation.kDebugMode) {

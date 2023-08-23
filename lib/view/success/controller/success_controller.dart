@@ -1,4 +1,4 @@
-  
+
 import 'package:beams_tapp/constants/dateformates.dart';
 import 'package:beams_tapp/constants/string_constant.dart';
 import 'package:beams_tapp/constants/styles.dart';
@@ -59,27 +59,19 @@ class SuccessController extends GetxController{
 
 
   //============================ =========================================19/jul/23 VARIABLE
-
+  Rx<BTStatus> currentStatus = BTStatus.none.obs;
   var defaultPrinterType = PrinterType.bluetooth.obs;
   var isBle = false.obs;
   var reconnect = false.obs;
   var isConnected = false.obs;
   var printerManager = PrinterManager.instance;
-  var devices = <BluetoothPrinter>[].obs;
+  var devices = [];
   StreamSubscription<PrinterDevice>? subscription;
   StreamSubscription<BTStatus>? subscriptionBtStatus;
   StreamSubscription<USBStatus>? subscriptionUsbStatus;
-
-  BTStatus currentStatus = BTStatus.none;
-  // _currentUsbStatus is only supports on Android
-  // ignore: unused_field
-  USBStatus currentUsbStatus = USBStatus.none;
+  // BTStatus currentStatus = BTStatus.none;
   List<int>? pendingTask;
-  String _ipAddress = '';
-  String _port = '9100';
-  final ipController = TextEditingController();
-  final portController = TextEditingController();
-  BluetoothPrinter ? selectedPrinter;
+
 
 
   //============================ =========================================19/jul/23 END_____VARIABLE
@@ -104,43 +96,66 @@ class SuccessController extends GetxController{
     printData.value.clear();
     if(mfnCheckValue(val)) {
       printData.value = val;
-     fnBlutoothConnect(amount,transactionid,cardnumber,slcode,sldesc,balance);
+      fnBlutoothConnect(amount,transactionid,cardnumber,slcode,sldesc,balance);
     }
   }
 
 
 
   fnBlutoothConnect(amount,transactionid,cardnumber,slcode,sldesc,balance) async {
-    List<BtDevice> devices = await flutterbluetoothconnector.getDevices();
-    if (devices.isNotEmpty) {
-      print("DEVICE ADDRESS>>>>>>>>>>> "+devices[0].address.toString());
-      print("DEVICE NAME>>>>>>>>>>> "+devices[0].name.toString());
+    Future.delayed(
+      Duration(seconds: 1),
+          () {
+        if (commonController.printYn.value == "Y") {
+          //   fnPrint(amount,transactionid,cardnumber,slcode,sldesc,balance);
+          //  fnsunmiPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
+          fncommonPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
 
-        BluetoothDevice d = BluetoothDevice();
-        d.address = devices[0].address;
-        d.name = devices[0].name;
-        _device.value = d;
+        }
+      });
+    // );
 
-      if (_device.value != null && _device.value.address != null) {
-        await bluetoothPrint.connect(_device.value);
-        Future.delayed(
-          Duration(seconds: 2),
-              () {
-            if (commonController.printYn.value == "Y") {
-               fnPrint(amount,transactionid,cardnumber,slcode,sldesc,balance);
-             //  fnsunmiPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
+   // List<BtDevice> devices = await flutterbluetoothconnector.getDevices();
 
-          //   fncommonPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
 
-            }
-          },
-        );
-      }
-    }else{
-      commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText(amount, transactionid, cardnumber, slcode, sldesc, balance)
-          :fnPrint(amount, transactionid, cardnumber, slcode, sldesc, balance);
+    // if (devices.isNotEmpty) {
+    //   print("DEVICE ADDRESS>>ww>>>>>>>>> "+devices[0].address.toString());
+    //   print("DEVICE NAME>>>>>>>>>>> "+devices[0].name.toString());
+    //
+    //
+    //
+    //   BluetoothDevice d = BluetoothDevice();
+    //   d.address = devices[0].address;
+    //   d.name = devices[0].name;
+    //   _device.value = d;
+    //   dprint("DEVICE>>>>>>>>>>>>>>>>>>>>SSS ${_device.value}");
+    //
+    //   if (_device.value.name != null && _device.value.address != null) {
+    //     await bluetoothPrint.connect(_device.value);
+    //     Future.delayed(
+    //       Duration(seconds: 1),
+    //           () {
+    //         if (commonController.printYn.value == "Y") {
+    //           //   fnPrint(amount,transactionid,cardnumber,slcode,sldesc,balance);
+    //           //  fnsunmiPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
+    //           fncommonPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
+    //
+    //         }
+    //       },
+    //     );
+    //   }
+    // }
 
-    }
+
+
+
+
+    // commonController.wstrSunmiDevice.value=="Y"?fnsunmiPrintText(amount, transactionid, cardnumber, slcode, sldesc, balance)
+    //     :fncommonPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance);
+
+    //fnPrint(amount, transactionid, cardnumber, slcode, sldesc, balance);
+
+
   }
 
   fnPrint(amount,transactionid,cardnumber,slcode,sldesc,balance) async {
@@ -232,14 +247,13 @@ class SuccessController extends GetxController{
     subscription?.cancel();
     subscriptionBtStatus?.cancel();
     subscriptionUsbStatus?.cancel();
-    portController.dispose();
-    ipController.dispose();
+
   }
 
-  void scan() {
-
-    devices.value.clear();
-    subscription = printerManager.discovery(type: defaultPrinterType.value, isBle: isBle.value).listen((device) {
+  scan()async {
+    print("START SCAN");
+    devices.clear();
+    subscription =await printerManager.discovery(type: defaultPrinterType.value, isBle: isBle.value).listen((device) {
       dprint(device);
 
 
@@ -247,53 +261,55 @@ class SuccessController extends GetxController{
       print("DEVICES>>>>> ${device.name}");
       print("address>>>>> ${device.address}");
       print("operatingSystem>>>>> ${device.operatingSystem}");
-      print("productId>>>>> ${device.productId}");
-      print("vendorId>>>>> ${device.vendorId}");
-      print("DEVICESssssssssss>>>>> ${devices}");
 
-
-        devices.value.add(BluetoothPrinter(
-          deviceName: device.name,
-          address: device.address,
-          isBle: isBle.value,
-          vendorId: device.vendorId,
-          productId: device.productId,
-          typePrinter: defaultPrinterType.value,
-        ));
-
+      devices.add(
+          BluetoothPrinter(
+        deviceName: device.name,
+        address: device.address,
+        isBle: isBle.value,
+        vendorId: device.vendorId,
+        productId: device.productId,
+        typePrinter: defaultPrinterType.value,
+      ));
+      print("==================ffddd=========================${devices}");
 
     });
-    print("===========================================${devices}");
+
 
   }
 
   void printEscPos(List<int> bytes, Generator generator) async {
-    dprint("LIST OF DEVICES>>>>>>>>>>>>>>>>>>>>>>>>> ${devices}");
-    dprint(devices);
-    var select =devices.value[0];
-    dprint("PRINT>>>FUNCTION...............................${select}.");
-    selectedPrinter=select;
-    var connectedTCP = false;
-    if (selectedPrinter == null) return;
-    var bluetoothPrinter = selectedPrinter!;
+    var  selectedPrinter;
+    try{
+      if(commonController.wBluetoothPrinter.value.address!.isNotEmpty){
+        selectedPrinter = commonController.wBluetoothPrinter.value;
+        dprint("gLOBAL INTERTTT >>${commonController.wBluetoothPrinter.value.typePrinter}");
+        dprint("gLOBAL INTER >>${selectedPrinter.typePrinter}");
+      }else{
+        selectedPrinter=devices[0];
+        dprint("LOCAL INTER >>${selectedPrinter.typePrinter}");
+      }
 
-    dprint("printType>>>>>>>>>>>>>>> ${bluetoothPrinter.typePrinter}");
+    }catch(e){
+      dprint(e);
+    }
+
+
+    dprint("PRINT>>>FUNCTIONfffff...............................>>${selectedPrinter.deviceName}.");
+
+
+    if (selectedPrinter == null) return;
+    var bluetoothPrinter = selectedPrinter;
+
+
+    dprint("PRINT>>>typePrinter........................>>${bluetoothPrinter.typePrinter}.");
+    dprint("PRINT>>>deviceName........................>>${bluetoothPrinter.deviceName}.");
+    dprint("PRINT>>>address........................>>${bluetoothPrinter.address}.");
+    dprint("PRINT>>>isBle........................>>${bluetoothPrinter.isBle}.");
 
     switch (bluetoothPrinter.typePrinter) {
-    // case PrinterType.usb:
-    //   bytes += generator.feed(2);
-    //   bytes += generator.cut();
-    //   await printerManager.connect(
-    //       type: bluetoothPrinter.typePrinter,
-    //       model: UsbPrinterInput(name: bluetoothPrinter.deviceName, productId: bluetoothPrinter.productId, vendorId: bluetoothPrinter.vendorId));
-    //   pendingTask = null;
-    //   break;
       case PrinterType.bluetooth:
         bytes += generator.cut(mode:PosCutMode.partial );
-        dprint("deviceName>>>>  ${bluetoothPrinter.deviceName}");
-        dprint("address>>>dd  ${bluetoothPrinter.address}");
-        dprint("isBle>>>>  ${bluetoothPrinter.isBle}");
-        dprint("_reconnect>>>>  ${reconnect}");
         await printerManager.connect(
             type: bluetoothPrinter.typePrinter,
             model: BluetoothPrinterInput(
@@ -304,19 +320,16 @@ class SuccessController extends GetxController{
         pendingTask = null;
         if (Platform.isAndroid) pendingTask = bytes;
         break;
-    // case PrinterType.network:
-    //   bytes += generator.feed(2);
-    //   bytes += generator.cut();
-    //   connectedTCP = await printerManager.connect(type: bluetoothPrinter.typePrinter, model: TcpPrinterInput(ipAddress: bluetoothPrinter.address!));
-    //   if (!connectedTCP) debugPrint(' --- please review your connection ---');
-    //   break;
       default:
     }
     if (bluetoothPrinter.typePrinter == PrinterType.bluetooth && Platform.isAndroid) {
-      if (currentStatus == BTStatus.connected) {
+      // dprint("isConnected.value>>>> ${currentStatus}");
+
+
         printerManager.send(type: bluetoothPrinter.typePrinter, bytes: bytes);
         pendingTask = null;
-      }
+
+
     } else {
       printerManager.send(type: bluetoothPrinter.typePrinter, bytes: bytes);
       if (bluetoothPrinter.typePrinter == PrinterType.network) {
@@ -329,16 +342,16 @@ class SuccessController extends GetxController{
   Future fncommonPrintText(amount,transactionid,cardnumber,slcode,sldesc,balance) async {
     var devid = await  Prefs.getString(AppStrings.deviceId);
     var devName = await  Prefs.getString(AppStrings.phonmodel);
-    dprint("NAME>>> ${slcode.toString()}");
-    dprint("amount>>> ${amount.toString()}");
-    dprint("transactionid>>> ${transactionid.toString()}");
-    dprint("cardnumber>>> ${cardnumber.toString()}");
-    dprint("balance>>> ${balance.toString()}");
-    dprint("devid>>> ${devid.toString()}");
-    dprint("devName>>> ${devName.toString()}");
+    // dprint("NAME>>> ${slcode.toString()}");
+    // dprint("amount>>> ${amount.toString()}");
+    // dprint("transactionid>>> ${transactionid.toString()}");
+    // dprint("cardnumber>>> ${cardnumber.toString()}");
+    // dprint("balance>>> ${balance.toString()}");
+    // dprint("devid>>> ${devid.toString()}");
+    // dprint("devName>>> ${devName.toString()}");
 
 
-  //  List<LineText> list = [];
+    //  List<LineText> list = [];
     List<int> bytes = [];
     dprint("TAP________Print.................");
 
@@ -351,16 +364,14 @@ class SuccessController extends GetxController{
     // final profile = await CapabilityProfile.load();
 
     // PaperSize.mm80 or PaperSize.mm58
-    final generator = Generator(PaperSize.mm58, profile);
+    final generator = await Generator(PaperSize.mm80, profile);
 
 
     for(var e in printData.value) {
       var type = e["TYPE"] ?? "";
       if (type == "L") {
-        dprint("printData.value:>>>> ${ printData.value}");
-        dprint("feed:>>>> ${ e}");
-        // list.add(LineText(linefeed: 1));
-        bytes += generator.feed(1);
+
+        bytes +=await generator.feed(1);
 
       }
       else {
@@ -369,49 +380,50 @@ class SuccessController extends GetxController{
         var align = e["ALIGN"] ?? "";
         var value = e["DEFAULT_VALUE"] ?? "";
         var weight = e["WEIGHT"] ?? 0;
+        var zoom = e["ZOOM"] ?? 1;
         var fontsize = e["FONT_SIZE"] ?? 15;
         if (value.toString().isEmpty && key.toString().isNotEmpty) {
           if (key == "DATE") {
-          //  value = (title + " " + setDate(9, DateTime.now()));
+            //  value = (title + " " + setDate(9, DateTime.now()));
             bytes += generator.text(title + ": " + setDate(9, DateTime.now()),);
 
           } else if (key == "CODE") {
-          //  value = (title + " " + transactionid.toString().toUpperCase());
-             bytes += generator.text(title + ": " + transactionid.toString().toUpperCase(),);
+            //  value = (title + " " + transactionid.toString().toUpperCase());
+            bytes += generator.text(title + ": " + transactionid.toString().toUpperCase(),);
           }
           else if (key == "TIME") {
-          //  value = (title + " " + setDate(11, DateTime.now()));
+            //  value = (title + " " + setDate(11, DateTime.now()));
             bytes += generator.text(title + ": " + setDate(11, DateTime.now()),);
           }
           else if (key == "SLCODE") {
-          //  value = (title + " " + slcode.toString().toUpperCase());
-             bytes += generator.text(title + ": " + slcode.toString().toUpperCase(),);
+            //  value = (title + " " + slcode.toString().toUpperCase());
+            bytes += generator.text(title + ": " + slcode.toString().toUpperCase(),);
           }
           else if (key == "USER") {
-           // value = (title + " " + commonController.wstrUserName.value.toString().toUpperCase());
-             bytes += generator.text(title + ": " + commonController.wstrUserName.value.toString().toUpperCase(),);
+            // value = (title + " " + commonController.wstrUserName.value.toString().toUpperCase());
+            bytes += generator.text(title + ": " + commonController.wstrUserName.value.toString().toUpperCase(),);
           }
           else if (key == "BALANCE") {
-           // value = (title + " " + (balance??"").toString());
+            // value = (title + " " + (balance??"").toString());
             bytes += generator.text(title + ": " + (balance??"").toString(),);
           }
           else if (key == "SLDESCP") {
-           // value = (title + " " + sldesc.toString().toUpperCase());
+            // value = (title + " " + sldesc.toString().toUpperCase());
             bytes += generator.text(title + ": " + sldesc.toString().toUpperCase(),);
           }
           else if (key == "AMT") {
-          //  value = (title + " " +mfnDbl(amount).toString());
-             bytes += generator.text(title + ": " + mfnDbl(amount).toString(),);
+            //  value = (title + " " +mfnDbl(amount).toString());
+            bytes += generator.text(title + ": " + mfnDbl(amount).toString(),);
           }
           else if (key == "CARD") {
 
-           // value = (title + "  " + cardnumber.toString().toUpperCase());
-             bytes += generator.text(title + ": " + cardnumber.toString().toUpperCase(),);
+            // value = (title + "  " + cardnumber.toString().toUpperCase());
+            bytes += generator.text(title + ": " + cardnumber.toString().toUpperCase(),);
           }
           /////FROM SHAREDPREFERNCE
           else if (key == "DEVICEID") {
-           // value = (title + " " + devid.toString().toUpperCase());
-             bytes += generator.text(title + ": " + devid.toString().toUpperCase(),);
+            // value = (title + " " + devid.toString().toUpperCase());
+            bytes += generator.text(title + ": " + devid.toString().toUpperCase(),);
           }
           else if (key == "DEVICENAME") {
             //value = (title + " " + devName.toString().toUpperCase());
@@ -422,8 +434,9 @@ class SuccessController extends GetxController{
 
         bytes += generator.text(value,
             styles: PosStyles(
-            align: align == "L" ?PosAlign.left: align == "C" ?PosAlign.center: align == "R"?PosAlign.right:PosAlign.left,
-             )
+              height: bytes.toString().isNotEmpty &&weight==1 && zoom==2?PosTextSize.size2:PosTextSize.size1,
+              align: align == "L" ?PosAlign.left: align == "C" ?PosAlign.center: align == "R"?PosAlign.right:PosAlign.left,
+            )
         );
         // list.add(LineText(
         //     type: type == "T" ? LineText.TYPE_TEXT : type == "I" ? LineText
@@ -440,17 +453,6 @@ class SuccessController extends GetxController{
       }
     }
     printEscPos(bytes, generator);
-
-
-
-
-
-
-
-
-
-
-
 
     //
     // // bytes += generator.setGlobalCodeTable('CP1250');
@@ -538,11 +540,6 @@ class SuccessController extends GetxController{
     dprint("devName>>> ${devName.toString()}");
     await SunmiPrinter.initPrinter();
     await SunmiPrinter.startTransactionPrint(true);
-    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-    // await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-
-
-
 
     List list = [];
     dprint("printData:>>>> ${ printData}");
@@ -552,7 +549,7 @@ class SuccessController extends GetxController{
       dprint("feed:>>>> ${e}");
       var type = e["TYPE"] ?? "";
       if (type == "L") {
-        SunmiPrinter.lineWrap(1);
+        await SunmiPrinter.lineWrap(1);
         //  list.add(LineText(linefeed: e["FEED"] ?? 1));
       }
       else {
@@ -564,7 +561,6 @@ class SuccessController extends GetxController{
         var zoom = e["ZOOM"] ?? 1;
         var fontsize = e["FONT_SIZE"] ?? 15;
         if (value.toString().isEmpty && key.toString().isNotEmpty) {
-          await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
           if (key == "DATE") {
             value = (title + ": " + setDate(9, DateTime.now()));
           } else if (key == "CODE") {
@@ -574,11 +570,11 @@ class SuccessController extends GetxController{
             value = (title + ": " + setDate(11, DateTime.now()));
           }
           else if (key == "SLCODE") {
-         value = (title + ": " + slcode.toString().toUpperCase());
+            value = (title + ": " + slcode.toString().toUpperCase());
 
           }
           else if (key == "USER") {
-           value = (title + ": " + commonController.wstrUserName.value.toString().toUpperCase());
+            value = (title + ": " + commonController.wstrUserName.value.toString().toUpperCase());
 
           }
           else if (key == "BALANCE") {
@@ -595,7 +591,7 @@ class SuccessController extends GetxController{
           }
           else if (key == "CARD") {
             // value = (title + "   xxx" + cardnumber.substring(3,8));
-           value = (title + ":  " + cardnumber.toString().toUpperCase());
+            value = (title + ": " + cardnumber.toString().toUpperCase());
 
           }
           /////FROM SHAREDPREFERNCE
@@ -609,7 +605,6 @@ class SuccessController extends GetxController{
           }
         }
         else if(value.toString().isNotEmpty && key.toString().isEmpty){
-          // await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
           value = (value.toString());
         }
 
@@ -618,8 +613,7 @@ class SuccessController extends GetxController{
         dprint("VALUE>>>> ${value}");
 
 
-        await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-        SunmiPrinter.printText(
+        await SunmiPrinter.printText(
           value,
           style:SunmiStyle(
             fontSize: value.toString().isNotEmpty &&weight==1 && zoom==2?SunmiFontSize.XL:SunmiFontSize.MD,
@@ -631,10 +625,9 @@ class SuccessController extends GetxController{
       }
     }
 
-     SunmiPrinter.cut();
-     await SunmiPrinter.line();
-     await SunmiPrinter.lineWrap(2);
-   await SunmiPrinter.exitTransactionPrint(true);
+    await SunmiPrinter.line();
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.exitTransactionPrint(true);
 
 
   }
